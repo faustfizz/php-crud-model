@@ -1,0 +1,27 @@
+{
+    "name": "maarsson/model",
+    "description": "Basic CRUD model with PDO connection",
+    "type": "library",
+    "keywords": [
+        "model",
+        "mvc"
+    ],
+    "homepage": "https://packagist.org/packages/maarsson",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "authors": [
+        {
+            "name": "Viktor Maarsson",
+            "email": "viktor@maarsson.se"
+        }
+    ],
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Maarsson\\": "src/"
+        }
+    }
+}

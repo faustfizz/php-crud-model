@@ -3,10 +3,10 @@
  * Abstract model for base CRUD functions
  *
  * @category MVC Model
- * @package  maarsson/mvc
+ * @package  maarsson/model
  * @author   Viktor Maarsson <viktor@maarsson.se>
  * @license  http://www.opensource.org/licenses/mit-license.php MIT Licence
- * @link     http://maarsson.se/mvc
+ * @link     http://maarsson.se/model
  */
 
 namespace Maarsson;
