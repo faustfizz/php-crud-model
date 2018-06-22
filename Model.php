@@ -9,6 +9,8 @@
  * @link     http://maarsson.se/mvc
  */
 
+namespace Maarsson;
+
 abstract class Model
 {
     /**

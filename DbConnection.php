@@ -9,6 +9,8 @@
  * @link     http://maarsson.se/model
  */
 
+namespace Maarsson;
+
 use PDO;
 
 class DbConnection
