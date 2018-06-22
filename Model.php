@@ -64,7 +64,7 @@ abstract class Model
     protected static $_tableInfo      = null;
 
     /**
-     * PDO error storage variable for future possibilities.
+     * \PDO error storage variable for future possibilities.
      */
     protected static $_statementError = null;
 
@@ -200,7 +200,7 @@ abstract class Model
      */
     protected static function db()
     {
-        return DbFactory::getConnection();
+        return DbConnection::init();
     }
 
 
@@ -216,7 +216,7 @@ abstract class Model
                 "DESCRIBE ".self::_self('_table').";"
             );
             $stmt->execute();
-            static::$_tableInfo = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            static::$_tableInfo = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             static::$_tableInfo['table'] = self::_self('_table');
       }
         return static::$_tableInfo;
@@ -323,7 +323,7 @@ abstract class Model
         static::$_statementError = $stmt->errorInfo();
 
         // fetch data
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $return = [];
         if ($stmt->rowCount()) {
             foreach ($result as $row) {
