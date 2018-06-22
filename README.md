@@ -1,16 +1,38 @@
-# USAGE
+# ABOUT
 
-This class creates model objects according to database table structure,
-and handle data.
-- Model uses timestamping and soft deleting by default, but
-it can be overrided for certain models.
+This class creates model objects according to database table structure, and handle data.
+- Model uses timestamping and soft deleting by default, but it can be overrided for certain models.
 - Properties that missing from the data table, will be ignored.
 - Manipulating the `id` property will be ignored as well.
+
+It also contains a basic PDO initializer, what can be used standalone for raw queries.
+
+# INSTALLATION
+Install package in your app folder via Composer:
+```sh
+composer require maarsson/model
+```
+Classes will be available via Composer´s autoloader, under the `Maarsson` namespace.
+
+Now you have to configure your database credentials somewhere in your app´s `bootstrap.php` or other loader:
+```php
+define('DB_HOST',     "127.0.0.1");
+define('DB_PORT',     "3306");
+define('DB_USER',     "user");
+define('DB_PASSWD',   "secret");
+define('DB_DATABASE', "my_database");
+define('DB_CHARSET',  "utf8mb4");
+```
+
+
+# USAGE
 
 ## In your model:
 
 Create your data table. Then your can use your own models by extending this base class in your **My_Model.php**.
 ```php
+use Maarsson\Model;
+
 class My_Model extends Model
 {
 }
@@ -18,6 +40,8 @@ class My_Model extends Model
 
 Always use `parent::__construct()` if you want to extend your models constructor with own functions.
 ```php
+use Maarsson\Model;
+
 class My_Model extends Model
 {
     protected function __construct(Array properties = null) {
@@ -172,4 +196,18 @@ User Object
             [username] => johndoe
         )
 )
+```
+
+## PDO Connector:
+
+You can use the `Maarsson\DbConnection` class for custom parametered queries:
+
+```php
+$id = 1;
+$query = "SELECT * FROM my_table WHERE id = :Id";
+$stmt = Maarsson\DbConnection::init();
+$stmt->prepare($query);
+$stmt->bindParam(':Id', $id);
+$result = $stmt->execute();
+$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 ```
