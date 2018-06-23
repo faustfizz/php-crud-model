@@ -201,14 +201,15 @@ Models can have different types of relationships:
 The relationship keys in the database are the `id` and the `related_table_id` columns.
 
 ### Defining relationship in model:
+Always use full namespaced class names for definitions.
 ```php
 class User extends Model
 {
     protected static $_hasOne = [
-        'account' => 'Account'          // 'property_name_in_model' => 'Existing_Model'
+        'account' => 'App\Account'      // 'property_name_in_this_model' => 'Other_Model'
     ];
     protected static $_hasMany = [
-        'phones' => 'Phone'
+        'phones' => 'App\User\Phone'
     ];
 }
 ```
