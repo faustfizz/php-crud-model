@@ -1,11 +1,10 @@
 # ABOUT
 
-This library incledes a model class to create model objects according to database table structure, and handle its data.
-- Model uses timestamping and soft deleting by default, but it can be overrided for certain models.
-- Properties that missing from the data table, will be ignored.
-- Manipulating the `id` property will be ignored as well.
-
-Library has an autoloader as well, to easy use namespaced models. It also contains a basic PDO initializer, what can be used standalone for raw queries.
+This library includes:
+- **model class** to create model objects according to database table structure, and handle its data
+- **autoloader class** for easy use namespaced models
+- **configuration loader class** to handle config (INI) files
+- **PDO connector class** what can be used standalone for raw queries.
 
 
 # INSTALLATION
@@ -14,24 +13,30 @@ Install package to your app via Composer:
 ```sh
 composer require maarsson/model
 ```
-Classes will be available via Composer´s PSR-4 autoloader, under the `Maarsson` namespace.
+Classes now available in your app under the `Maarsson` namespace, via Composer´s PSR-4 autoloader.
 
-First you have to configure your database credentials somewhere in your app´s `bootstrap.php` or other loader:
-```php
-define('DB_HOST',     "127.0.0.1");
-define('DB_PORT',     "3306");
-define('DB_USER',     "user");
-define('DB_PASSWD',   "secret");
-define('DB_DATABASE', "my_database");
-define('DB_CHARSET',  "utf8mb4");
+Next step to configure your database credentials, by a config file, eg. `config/database.ini`:
+```
+# database configuration file
+[database]
+host     = "127.0.0.1"
+port     = "3306"
+user     = "user"
+passwd   = "secret"
+database = "my_database"
+charset  = "utf8mb4"
 ```
 
-Create your model folder (eg. `app/model`) and register this folder somewhere in your app´s `bootstrap.php` or other loader:
+> **IMPORTANT:** Make sure that your INI files are not accessible by web browser.
+
+Load this config file **with the `db` prefix** somewhere in your app´s `bootstrap.php` or other loader file, right after your composer´s autoloader. Create your model folder (eg. `app/model`) and register here as well. So your loader should look like:
 ```php
+require __DIR__ . '/vendor/autoload.php';
+Maarsson\Env::parse(__DIR__ . '/config/database.ini', 'db');
 Maarsson\Autoloader::setPath(__DIR__.'app/model/');
 ```
 
-Now you can put your models into this folder, with mathcing namespaces and folder structure.
+Now you can put your models into your app folder, with mathcing namespaces and folder structure.
 ```
 [my_app]
     |-- [app]
@@ -42,6 +47,8 @@ Now you can put your models into this folder, with mathcing namespaces and folde
             |-- Address.php
         |-- Car.php
         |-- Garage.php
+    |-- [config]
+        |-- database.ini
     |-- [public]
         |-- index.php
     |-- [vendor]
@@ -77,7 +84,22 @@ $garage_address    = new GarageAddress();
 
 ## In your model:
 
-Create your data table. Then your can use your own models by extending this base class in your **MyModel.php**.
+Create your data table. A pure table structure for a model should be:
+```
+CREATE TABLE `model` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` int(11) NOT NULL DEFAULT '0',
+  `updated_at` int(11) NOT NULL DEFAULT '0',
+  `deleted_at` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+);
+```
+Use this structure, and add a column for all of your custom properties, like name, value, etc. 
+> Model uses timestamping and soft deleting by default, but it can be overrided for certain models.
+> Properties that has no matching column in the data table, will be ignored.
+> Manipulating the `id` property will be ignored as well.
+
+Then your can use your own models by extending this base class in your **MyModel.php**.
 ```php
 namespace App;
 
@@ -206,7 +228,7 @@ Always use full namespaced class names for definitions.
 class User extends Model
 {
     protected static $_hasOne = [
-        'account' => 'App\Account'      // 'property_name_in_this_model' => 'Other_Model'
+        'account' => 'App\Account'          // 'property_name_in_this_model' => 'Other_Model'
     ];
     protected static $_hasMany = [
         'phones' => 'App\User\Phone'
@@ -260,3 +282,23 @@ $stmt->bindParam(':Id', $id);
 $result = $stmt->execute();
 $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 ```
+
+## INI loader:
+
+You can use the `Maarsson\Env` class to reach your other settings. Every INI file entry became an uppercased constans (you can also add prefix, if wanted).
+
+```
+# in your configuration file
+name = "My App"
+```
+```php
+// in your code
+Maarsson\Env::parse('config.ini');
+var_dump(NAME);                 // string(6) "My App"
+
+// or with prefix
+Maarsson\Env::parse('config.ini', 'app');
+var_dump(APP_NAME);             // string(6) "My App"
+```
+
+> **IMPORTANT:** Make sure that your INI files are not accessible by web browser.
