@@ -23,12 +23,12 @@ class Autoloader
      * Main directory to be iterated for files.
      * It can be overrided by: Autoloader::setPath();
      */
-    protected static $_path = __DIR__;
+    protected static $_path = array(__DIR__);
 
     /**
      * \RecursiveDirectoryIterator storage variable.
      */
-    protected static $_pathIterator = null;
+    protected static $_pathIterator = [];
 
 
     /**
@@ -48,12 +48,14 @@ class Autoloader
 
         $filename = strtolower($class . static::$_ext);
 
-        foreach (static::pathIterator() as $file) {
-            if (static::endsWith($filename,strtolower($file->getFilename()))) {
-                if ($file->isReadable()) {
-                    include_once($file->getPathname());
+        foreach (static::pathIterator() as $iterator) {
+            foreach ($iterator as $file) {
+                if (static::endsWith($filename,strtolower($file->getFilename()))) {
+                    if ($file->isReadable()) {
+                        include_once($file->getPathname());
+                    }
+                    break;
                 }
-                break;
             }
         }
     }
@@ -66,12 +68,14 @@ class Autoloader
      */
     private static function pathIterator()
     {
-        $directory = new \RecursiveDirectoryIterator(
-            static::$_path, \RecursiveDirectoryIterator::SKIP_DOTS
-        );
+        foreach (static::$_path as $path) {
+            $directory = new \RecursiveDirectoryIterator(
+                $path, \RecursiveDirectoryIterator::SKIP_DOTS
+            );
 
-        if (is_null(static::$_pathIterator)) {
-            static::$_pathIterator = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::LEAVES_ONLY);
+            if (!isset(static::$_pathIterator[$path])) {
+                static::$_pathIterator[$path] = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::LEAVES_ONLY);
+            }
         }
 
         return static::$_pathIterator;
@@ -110,12 +114,11 @@ class Autoloader
      * @param (string) $path
      * @return (void)
      */
-    public static function setPath($path)
+    public static function addPath($path)
     {
-        static::$_path = $path;
+        static::$_path[] = $path;
     }
 }
 
 // register this class as first, to be able to use it later for registering
 spl_autoload_register('Maarsson\Autoloader::load');
-
