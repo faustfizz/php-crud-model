@@ -471,7 +471,9 @@ abstract class Model
     {
         // search for model
         $object = self::where([$field => $value]);
-        $object = reset($object);
+        if ($object) {
+            $object = reset($object);
+        }
         return $object;
     }
 
