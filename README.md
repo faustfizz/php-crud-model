@@ -33,7 +33,7 @@ Load this config file **with the `db` prefix** somewhere in your app´s `bootstr
 ```php
 require __DIR__ . '/vendor/autoload.php';
 Maarsson\Env::parse(__DIR__ . '/config/database.ini', 'db');
-Maarsson\Autoloader::setPath(__DIR__.'app/model/');
+Maarsson\Autoloader::addPath(__DIR__.'app/model/');
 ```
 
 Now you can put your models into your app folder, with mathcing namespaces and folder structure.
@@ -281,6 +281,15 @@ $stmt->prepare($query);
 $stmt->bindParam(':Id', $id);
 $result = $stmt->execute();
 $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+```
+
+## Autoloader:
+
+You can use autoloader to load your classes from multiple direcories. Just add:
+
+```php
+Maarsson\Autoloader::addPath('path/to/classes');
+Maarsson\Autoloader::addPath('path/to/modules');
 ```
 
 ## INI loader:
