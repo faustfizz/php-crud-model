@@ -184,7 +184,11 @@ abstract class Model
         // separated return for table name
         // since its name depends on model
         if ($property == '_table') {
-            return (isset(static::$_table) ? static::$_table : strtolower(get_called_class()));
+            if (isset(static::$_table)) {
+                return static::$_table;
+            } else {
+                return strtolower((new \ReflectionClass(get_called_class()))->getShortName());
+            }
         }
 
         // for the other properties
