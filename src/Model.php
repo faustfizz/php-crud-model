@@ -150,7 +150,7 @@ abstract class Model
         if(count(static::$_belongsTo)) {
             foreach (static::$_belongsTo as $property => $class) {
                 // exclude vica-versa relations, to avoid infinity loop
-                if (in_array(static::class, $class::$_hasOne) || in_array(static::class, $class::$_hasMany)) {
+                if ((isset($class::$_hasOne) && in_array(static::class, $class::$_hasOne)) || (isset($class::$_hasMany)  && in_array(static::class, $class::$_hasMany))) {
                     continue;
                 }
                 $this->{$property} = $this->belongsTo($class);
@@ -160,7 +160,7 @@ abstract class Model
         if(count(static::$_belongsToMany)) {
             foreach (static::$_belongsToMany as $property => $class) {
                 // exclude vica-versa relations, to avoid infinity loop
-                if (in_array(static::class, $class::$_hasOne) || in_array(static::class, $class::$_hasMany)) {
+                if ((isset($class::$_hasOne) && in_array(static::class, $class::$_hasOne)) || (isset($class::$_hasMany)  && in_array(static::class, $class::$_hasMany))) {
                     continue;
                 }
                 $this->{$property} = $this->belongsToMany($class);
