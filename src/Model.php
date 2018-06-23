@@ -99,7 +99,7 @@ abstract class Model
      * @todo define and use foreign and local keys for relationships
      * @todo infinity loop avoiding still exists in some relationship cases (belongTo-belongsToMany)
      */
-    protected function __construct(Array $properties = null)
+    public function __construct(Array $properties = null)
     {
         // build up available properties
         // and try to match types
