@@ -246,10 +246,10 @@ Always use full namespaced class names for definitions.
 class User extends Model
 {
     protected static $_hasOne = [
-        'account' => 'App\Account'          // 'property_name_in_this_model' => 'Other_Model'
+        'account' => 'App\\Account'          // 'property_name_in_this_model' => 'Other_Model'
     ];
     protected static $_hasMany = [
-        'phones' => 'App\User\Phone'
+        'phones' => 'App\\User\\Phone'
     ];
 }
 ```
