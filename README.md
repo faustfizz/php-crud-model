@@ -172,6 +172,24 @@ The `where()` method will return with array of objects, even if only one satisfy
 But emtpy results will return as `null`.
 
 
+### Getting object(s) by order:
+Simple ascending order by one property:
+```php
+$properties = array();
+$my_model = MyModel::where($properties, 'name');
+```
+
+Complex ordering:
+```php
+$properties = array();
+$orderBy = array(
+    'name' => 'asc',
+    'value' => 'desc'
+);
+$my_model = MyModel::where($properties, $orderBy);
+```
+
+
 ### Creating object if not exists:
 ```php
 $properties = array(
