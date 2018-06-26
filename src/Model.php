@@ -284,10 +284,11 @@ abstract class Model
      * Search for models matching with properties.
      *
      * @param (array) $properties
+     * @param (array) $orderBy
      * @return (array) of Models
      * @return (null) if no match
      */
-    public static function where(Array $properties = null)
+    public static function where(Array $properties = null, $orderBy = null)
     {
         // set condition for soft deletes
         if(self::_self('_soft_deletes')) {
@@ -319,6 +320,17 @@ abstract class Model
             }
         }
         $query .= implode(' AND ',$preparedConditions);
+        if ($orderBy) {
+            if (is_array($orderBy)) {
+                $preparedOrderBy = [];
+                foreach ($orderBy as $property => $order) {
+                    $preparedOrderBy[] = $property.' '.strtoupper( $order);
+                }
+                $query .= " ORDER BY ".implode(', ',$preparedOrderBy);
+            } elseif (in_array($orderBy, self::getFields())) {
+                $query .= " ORDER BY ".$orderBy." ASC";
+            }
+        }
 
         // run query
         $stmt = self::db()->prepare($query);
