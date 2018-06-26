@@ -50,7 +50,7 @@ class Autoloader
 
         foreach (static::pathIterator() as $iterator) {
             foreach ($iterator as $file) {
-                if (static::endsWith($filename,strtolower($file->getFilename()))) {
+                if (static::endsWith(strtolower($file->getPathname()),$filename)) {
                     if ($file->isReadable()) {
                         include_once($file->getPathname());
                     }
