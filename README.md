@@ -1,129 +1,13 @@
 # Standalone CRUD model class
-CRUD (create, read, update, delete) model class for standalone PHP projects, but with Laravel-like usage.
+CRUD (create, read, update, delete) model class for standalone PHP projects, but with Laravel-like usage. Beside the model, it includes an autoloader, a configuration file loader and a PDO connector as well. For full documentation visit [project´s Wiki page](https://bitbucket.org/viktormaar/php-crud-model/wiki/Home)
 
-- [About](#about)
-- [Installation](#installation)
-- [Usage](#usage)
-    - [Making models](#making-models)
-    - [Using models](#using-models)
-        - [Create](#creating-a-new-object)
-        - [Get](#getting-objects)
-        - [Find](#finding-objects-by-complex-conditions)
-        - [Ordered find](#finding-objects-in-custom-order)
-        - [Auto-create](#creating-object-if-not-exists)
-        - [Update](#updating-object)
-        - [Delete](#deleting-object)
-    - [Relationships](#relationships)
-        - [Defining](#defining-relationship-in-model)
-        - [Using](#using-relationship-in-your-app)
-- [PDO Connector](#pdo-connector)
-- [Autoloader](#autoloader)
-- [Config loader](#config-loader)
-
-
-## ABOUT
-
-This library includes:
-- **model class** to create model objects according to database table structure, and handle its data
-- **autoloader class** for easy use namespaced models
-- **configuration loader class** to handle config (INI) files
-- **PDO connector class** what can be used standalone for raw queries.
-
-
-## INSTALLATION
+## Usage
 
 Install package to your app via Composer:
 ```sh
 composer require maarsson/model
 ```
-Classes now available in your app under the `Maarsson` namespace, via Composer´s PSR-4 autoloader.
-
-Next step to configure your database credentials, by a config file, eg. `config/database.ini`:
-```
-# database configuration file
-[database]
-host     = "127.0.0.1"
-port     = "3306"
-user     = "user"
-passwd   = "secret"
-database = "my_database"
-charset  = "utf8mb4"
-```
-
-> **IMPORTANT:** Make sure that your INI files are not accessible by web browser.
-
-Load this config file **with the `db` prefix** somewhere in your app´s `bootstrap.php` or other loader file, right after your composer´s autoloader. Create your model folder (eg. `app/model`) and register here as well. So your loader should look like:
-```php
-require __DIR__ . '/vendor/autoload.php';
-Maarsson\Env::parse(__DIR__ . '/config/database.ini', 'db');
-Maarsson\Autoloader::addPath(__DIR__.'/model/');
-```
-
-Now you can put your models into your app folder, with mathcing namespaces and folder structure.
-```
-[my_app]
-    |-- [model]
-        |-- [app]
-            |-- [Car]
-                |-- LicensePlate.php
-                |-- Part.php
-            |-- [Garage]
-                |-- Address.php
-            |-- Car.php
-            |-- Garage.php
-    |-- [config]
-        |-- database.ini
-    |-- [public]
-        |-- index.php
-    |-- [vendor]
-    |-- bootstrap.php
-```
-
-In this example you can use your models by full namespaced name...
-```php
-$car               = new App\Car();
-$car_license_plate = new App\Car\LicensePlate();
-$car_part          = new App\Car\Part();
-$garage            = new App\Garage();
-$garage_address    = new App\Garage\Address();
-```
-
-...or by basename (or alias) with `use`.
-```php
-use App\Car;
-use App\Car\LicensePlate;
-use App\Car\Part;
-use App\Garage;
-use App\Garage\Address as GarageAddress;    // your can also use alias
-
-$car               = new Car();
-$car_license_plate = new LicensePlate();
-$car_part          = new Part();
-$garage            = new Garage();
-$garage_address    = new GarageAddress();
-```
-
-
-# USAGE
-
-## Making models:
-
-Create your data table. A pure table structure for a model should be:
-```
-CREATE TABLE `model` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` int(11) NOT NULL DEFAULT '0',
-  `updated_at` int(11) NOT NULL DEFAULT '0',
-  `deleted_at` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-);
-```
-Use this structure, and add a column for all of your custom properties, like name, value, etc. 
-> Model uses timestamping and soft deleting by default, but it can be overrided for certain models.
-> Properties that has no matching column in the data table, will be ignored.
-> Manipulating the `id` property will be ignored as well.
-
-Then your can use your own models by extending this base class in your **MyModel.php**.
+Classes will be under the `Maarsson` namespace, via Composer´s PSR-4 autoloader. After you configured your database connection ([see the documentation](https://bitbucket.org/viktormaar/php-crud-model/wiki/Home), how to do that), you can use your database tables as models by extending this base class in your **MyModel.php**.
 ```php
 namespace App;
 
@@ -133,37 +17,15 @@ class MyModel extends Model
 {
 }
 ```
-
-Always use `parent::__construct()` if you want to extend your models constructor with own functions.
-```php
-namespace App;
-
-use Maarsson\Model;
-
-class MyModel extends Model
-{
-    protected function __construct(Array properties = null) {
-        parent::__construct($properties);
-        /*
-            your custom code
-        */
-    }
-}
-```
-
-## Using models:
 
 ### Creating a new object:
 ```php
 $properties = array(
     'title'     => 'First Object',
-    'size'      => 99,
-    'undefined' => 'Value',             // will be ignored as not existing property
+    'size'      => 99
 );
 $my_model = MyModel::create($properties);
 ```
-
-Undeclared properties will get the data table columns default setting.
 
 
 ### Getting object(s):
@@ -178,33 +40,24 @@ $my_model = MyModel::find('First Object','title');
 $my_model = MyModel::all();
 ```
 
-The `find()` method will return only one object even if more satisfy search condition.
-Emtpy results will return as `null`.
-
 
 ### Finding object(s) by complex conditions:
 ```php
 $properties = array(
     'title'     => 'First Object',      // equivalent with ['title','=', 'First Object']
-    'undefined' => 'Value',             // will be ignored as not existing property
-    ['size','>=', 99],
-    ['undefined','LIKE', '%value%']     // will be ignored as not existing property
+    ['size','>=', 99]
 );
 $my_model = MyModel::where($properties);
 ```
-The `where()` method will return with array of objects, even if only one satisfy search condition.
-But emtpy results will return as `null`.
 
 
 ### Finding object(s) in custom order:
-Simple ascending order by one property:
 ```php
+// simple ascending order by a field
 $properties = array();
 $my_model = MyModel::where($properties, 'name');
-```
 
-Complex ordering:
-```php
+// complex ordering
 $properties = array();
 $orderBy = array(
     'name' => 'asc',
@@ -218,14 +71,10 @@ $my_model = MyModel::where($properties, $orderBy);
 ```php
 $properties = array(
     'title'     => 'First Object',
-    'undefined' => 'ignored',           // will be ignored as not existing property
-    ['size','>=', 99],                  // will be ignored as not allowed
-    ['undefined','LIKE', '%ignored%']   // will be ignored as not allowed
+    ['size','>=', 99]
 );
 $my_model = MyModel::findOrCreate($properties);
 ```
-The `findOrCreate()` method will return only one object even if more satisfy search condition.
-Emtpy results will return as `null`.
 
 
 ### Updating object:
@@ -243,7 +92,6 @@ $properties = array(
 );
 $my_model->update($properties);
 ```
-The `update()` and `updateProperty()` methods will `true` or `false`, according to the result of updating.
 
 
 ### Deleting object:
@@ -251,7 +99,6 @@ The `update()` and `updateProperty()` methods will `true` or `false`, according 
 $my_model = MyModel::find(1);
 $my_model->delete();
 ```
-The `update()` and `updateProperty()` methods will `true` or `false`, according to the result of updating.
 
 
 ## Relationships
@@ -278,52 +125,8 @@ class User extends Model
 }
 ```
 
-### Using relationship in your app:
-```php
-// load the model
-$user = User::find(1);
-dump($user);
-```
-Will print out:
-```php
-User Object
-(
-    [id:protected] => 1
-    [name] => John Doe
-    [phones] => Array
-        (
-            [0] => Phone Object
-                (
-                    [id:protected] => 1
-                    [number] => 040-111-1111
-                )
-            [1] => Phone Object
-                (
-                    [id:protected] => 2
-                    [number] => 040-222-2222
-                )
-        )
-    [account] => Account Object
-        (
-            [id:protected] => 1
-            [username] => johndoe
-        )
-)
-```
+Related data will automatically attached when getting the model.
 
-## PDO Connector:
-
-You can use the `Maarsson\DbConnection` class for custom parametered queries:
-
-```php
-$id = 1;
-$query = "SELECT * FROM my_table WHERE id = :Id";
-$stmt = Maarsson\DbConnection::init();
-$stmt->prepare($query);
-$stmt->bindParam(':Id', $id);
-$result = $stmt->execute();
-$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-```
 
 ## Autoloader:
 
@@ -333,45 +136,3 @@ You can use autoloader to load your classes from multiple direcories. Just add:
 Maarsson\Autoloader::addPath('path/to/classes');
 Maarsson\Autoloader::addPath('path/to/modules');
 ```
-
-## Config loader:
-
-You can use the `Maarsson\Env` class to reach your other settings. Every INI file entry became an uppercased `$_ENV` property (you can also add prefix, if wanted).
-
-```
-# in your configuration file
-name = "My App"
-```
-```php
-// in your code
-Maarsson\Env::parse('config.ini');
-var_dump($_ENV['NAME']);                 // string(6) "My App"
-
-// or with prefix
-Maarsson\Env::parse('config.ini', 'app');
-var_dump($_ENV['APP_NAME']);             // string(6) "My App"
-```
-
-For the easy usage, you can even place a helper function to your app, something like this:
-
-```php
-if (! function_exists('env')) {
-    /**
-     * Get the required $_ENV global property
-     *
-     * @param      (string)  $property  The property
-     *
-     * @return     (mixed)   ENV value
-     * @return     (bool)    false if property not exists
-     */
-    function env($property)
-    {
-        if (isset($_ENV[$property])) {
-            return $_ENV[$property];
-        }
-        return false;
-    }
-}
-```
-
-> **IMPORTANT:** Make sure that your INI files are not accessible by web browser.
