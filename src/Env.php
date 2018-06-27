@@ -1,7 +1,7 @@
 <?php
 /**
  * Simple INI file loader
- * Converts entries to constans, even with prefix.
+ * Converts entries to the $_ENV globals, even with prefix.
  *
  * @category MVC Model
  * @package  maarsson/model
@@ -15,7 +15,7 @@ namespace Maarsson;
 class Env {
 
     /**
-     * Load the INI file and make uppercased constans for every variable.
+     * Load the INI file and make uppercased ENV properties for every variable.
      *
      * @param (string) $file
      * @param (string) $prefix
@@ -26,8 +26,8 @@ class Env {
 
         $config = parse_ini_file($file);
         foreach ($config as $key => $value) {
-            $constans = strtoupper($prefix.$key);
-            define($constans,$value);
+            $env = strtoupper($prefix.$key);
+            $_ENV[$env] = $value;
         }
     }
 }

@@ -312,7 +312,7 @@ Maarsson\Autoloader::addPath('path/to/modules');
 
 ## INI loader:
 
-You can use the `Maarsson\Env` class to reach your other settings. Every INI file entry became an uppercased constans (you can also add prefix, if wanted).
+You can use the `Maarsson\Env` class to reach your other settings. Every INI file entry became an uppercased `$_ENV` property (you can also add prefix, if wanted).
 
 ```
 # in your configuration file
@@ -321,11 +321,33 @@ name = "My App"
 ```php
 // in your code
 Maarsson\Env::parse('config.ini');
-var_dump(NAME);                 // string(6) "My App"
+var_dump($_ENV['NAME']);                 // string(6) "My App"
 
 // or with prefix
 Maarsson\Env::parse('config.ini', 'app');
-var_dump(APP_NAME);             // string(6) "My App"
+var_dump($_ENV['APP_NAME']);             // string(6) "My App"
+```
+
+For the easy usage, you can even place a helper function to your app, something like this:
+
+```php
+if (! function_exists('env')) {
+    /**
+     * Get the required $_ENV global property
+     *
+     * @param      (string)  $property  The property
+     *
+     * @return     (mixed)   ENV value
+     * @return     (bool)    false if property not exists
+     */
+    function env($property)
+    {
+        if (isset($_ENV[$property])) {
+            return $_ENV[$property];
+        }
+        return false;
+    }
+}
 ```
 
 > **IMPORTANT:** Make sure that your INI files are not accessible by web browser.
