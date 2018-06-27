@@ -1,4 +1,28 @@
-# ABOUT
+
+# Standalone CRUD model class
+CRUD (create, read, update, delete) model class for standalone PHP projects, but with Laravel-like usage.
+
+- [About](#about)
+- [Installation](#installation)
+- [Usage](#usage)
+    - [Making models](#making-models)
+    - [Using models](#using-models)
+        - [Create](#creating-a-new-object)
+        - [Get](#getting-objects)
+        - [Find](#finding-objects-by-complex-conditions)
+        - [Ordered find](#finding-objects-in-custom-order)
+        - [Auto-create](#creating-object-if-not-exists)
+        - [Update](#updating-object)
+        - [Delete](#deleting-object)
+    - [Relationships](#relationships)
+        - [Defining](#defining-relationship-in-model)
+        - [Using](#using-relationship-in-your-app)
+- [PDO Connector](#pdo-connector)
+- [Autoloader](#autoloader)
+- [Config loader](#config-loader)
+
+
+## ABOUT
 
 This library includes:
 - **model class** to create model objects according to database table structure, and handle its data
@@ -7,7 +31,7 @@ This library includes:
 - **PDO connector class** what can be used standalone for raw queries.
 
 
-# INSTALLATION
+## INSTALLATION
 
 Install package to your app via Composer:
 ```sh
@@ -82,7 +106,7 @@ $garage_address    = new GarageAddress();
 
 # USAGE
 
-## In your model:
+## Making models:
 
 Create your data table. A pure table structure for a model should be:
 ```
@@ -127,7 +151,7 @@ class MyModel extends Model
 }
 ```
 
-## In your app:
+## Using models:
 
 ### Creating a new object:
 ```php
@@ -158,7 +182,7 @@ The `find()` method will return only one object even if more satisfy search cond
 Emtpy results will return as `null`.
 
 
-### Getting object(s) by complex conditions:
+### Finding object(s) by complex conditions:
 ```php
 $properties = array(
     'title'     => 'First Object',      // equivalent with ['title','=', 'First Object']
@@ -172,7 +196,7 @@ The `where()` method will return with array of objects, even if only one satisfy
 But emtpy results will return as `null`.
 
 
-### Getting object(s) by order:
+### Finding object(s) in custom order:
 Simple ascending order by one property:
 ```php
 $properties = array();
@@ -310,7 +334,7 @@ Maarsson\Autoloader::addPath('path/to/classes');
 Maarsson\Autoloader::addPath('path/to/modules');
 ```
 
-## INI loader:
+## Config loader:
 
 You can use the `Maarsson\Env` class to reach your other settings. Every INI file entry became an uppercased `$_ENV` property (you can also add prefix, if wanted).
 
