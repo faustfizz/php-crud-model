@@ -1,4 +1,3 @@
-
 # Standalone CRUD model class
 CRUD (create, read, update, delete) model class for standalone PHP projects, but with Laravel-like usage.
 
@@ -57,20 +56,21 @@ Load this config file **with the `db` prefix** somewhere in your app´s `bootstr
 ```php
 require __DIR__ . '/vendor/autoload.php';
 Maarsson\Env::parse(__DIR__ . '/config/database.ini', 'db');
-Maarsson\Autoloader::addPath(__DIR__.'app/model/');
+Maarsson\Autoloader::addPath(__DIR__.'/model/');
 ```
 
 Now you can put your models into your app folder, with mathcing namespaces and folder structure.
 ```
 [my_app]
-    |-- [app]
-        |-- [Car]
-            |-- LicensePlate.php
-            |-- Part.php
-        |-- [Garage]
-            |-- Address.php
-        |-- Car.php
-        |-- Garage.php
+    |-- [model]
+        |-- [app]
+            |-- [Car]
+                |-- LicensePlate.php
+                |-- Part.php
+            |-- [Garage]
+                |-- Address.php
+            |-- Car.php
+            |-- Garage.php
     |-- [config]
         |-- database.ini
     |-- [public]
