@@ -12,6 +12,8 @@
 
 namespace Maarsson;
 
+use PDO;
+
 class DbConnection extends PDO
 {
     /**
