@@ -57,7 +57,7 @@ class DbConnection extends PDO
             ];
             $prefix = isset($_ENV['DB_PREFIX']) ? $_ENV['DB_PREFIX'] : null;
             $suffix = isset($_ENV['DB_SUFFIX']) ? $_ENV['DB_SUFFIX'] : null;
-            self::$db = new PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASSWD'], $opt, $prefix, $suffix);
+            self::$db = new self($dsn, $_ENV['DB_USER'], $_ENV['DB_PASSWD'], $opt, $prefix, $suffix);
         }
         return self::$db;
     }
