@@ -1,5 +1,5 @@
 # Standalone CRUD model class
-CRUD (create, read, update, delete) model class for standalone PHP projects, but with Laravel-like usage. Beside the model, it includes an autoloader, a configuration file loader and a PDO connector as well. For full documentation visit [project´s Wiki page](https://bitbucket.org/viktormaar/php-crud-model/wiki/Home)
+CRUD (create, read, update, delete) model class for standalone PHP projects, but with Laravel-like usage. Beside the model, it includes an autoloader, a configuration file loader and a PDO connector, with table prefix/suffix options as well. For full documentation visit [project´s Wiki page](https://bitbucket.org/viktormaar/php-crud-model/wiki/Home)
 
 ## Usage
 
