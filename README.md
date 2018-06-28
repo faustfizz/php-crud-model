@@ -87,8 +87,7 @@ $my_model->updateProperty('name','Updated Name');
 // mass-update properties
 $properties = array(
     'title'     => 'Updated Object',
-    'size'      => 100,
-    'undefined' => 'Updated Value'      // will be ignored as not existing property
+    'size'      => 100
 );
 $my_model->update($properties);
 ```
