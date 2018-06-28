@@ -583,7 +583,7 @@ abstract class Model
     private function hasRelationship($foreign_key = null, $local_key = null)
     {
         if (!$foreign_key) {
-            $foreign_key = self::_self('_table').'_id';
+            $foreign_key = preg_replace('/^(\\%s)(.*)(\\%s)$/', '$2', self::_self('_table')).'_id';
         }
         if (!$local_key) {
             $local_key = 'id';
@@ -610,7 +610,7 @@ abstract class Model
             $foreign_key = 'id';
         }
         if (!$local_key) {
-            $local_key = $class::_self('_table').'_id';
+            $local_key = preg_replace('/^(\\%s)(.*)(\\%s)$/', '$2', $class::_self('_table')).'_id';
         }
         return [
             'field' => $foreign_key,
