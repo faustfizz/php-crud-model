@@ -283,6 +283,18 @@ abstract class Model
 
 
     /**
+     * Dedicated property getter exactly for the protected ID field.
+     *
+     * @return (int) actual Id
+     * @return (bool)false if no Id
+     */
+    public function getId()
+    {
+        return $this->_get('id');
+    }
+
+
+    /**
      * Search for models matching with properties.
      *
      * @param (array) $properties
