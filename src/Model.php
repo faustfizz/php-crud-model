@@ -93,48 +93,16 @@ abstract class Model
      *
      * @param (array) $properties
      * @return (object) Model instance
-     *
-     * @todo define and use foreign and local keys for relationships
-     * @todo infinity loop avoiding still exists in some relationship cases (belongTo-belongsToMany)
      */
     public function __construct(Array $properties = null)
     {
+        // load property values with proper type
         foreach (self::getFields() as $property) {
             $this->{$property} = self::matchType($property, $properties[$property]);
         }
 
         // load relations as properties
-        if(count(static::$_hasOne)) {
-            foreach (static::$_hasOne as $property => $class) {
-                $this->{$property} = $this->hasOne($class);
-            }
-        }
-
-        if(count(static::$_hasMany)) {
-            foreach (static::$_hasMany as $property => $class) {
-                $this->{$property} = $this->hasMany($class);
-            }
-        }
-
-        if(count(static::$_belongsTo)) {
-            foreach (static::$_belongsTo as $property => $class) {
-                // exclude vica-versa relations, to avoid infinity loop
-                if ((isset($class::$_hasOne) && in_array(static::class, $class::$_hasOne)) || (isset($class::$_hasMany)  && in_array(static::class, $class::$_hasMany))) {
-                    continue;
-                }
-                $this->{$property} = $this->belongsTo($class);
-            }
-        }
-
-        if(count(static::$_belongsToMany)) {
-            foreach (static::$_belongsToMany as $property => $class) {
-                // exclude vica-versa relations, to avoid infinity loop
-                if ((isset($class::$_hasOne) && in_array(static::class, $class::$_hasOne)) || (isset($class::$_hasMany)  && in_array(static::class, $class::$_hasMany))) {
-                    continue;
-                }
-                $this->{$property} = $this->belongsToMany($class);
-            }
-        }
+        self::loadRelations();
     }
 
 
@@ -588,6 +556,51 @@ abstract class Model
     public function updateProperty($field, $value)
     {
         return $this->update([$field => $value]);
+    }
+
+
+    /**
+     * Load the defined relation models
+     * and add them as property of this model.
+     *
+     * @return (void)
+     *
+     * @todo define and use foreign and local keys for relationships
+     * @todo infinity loop avoiding still exists in some relationship cases (belongTo-belongsToMany)
+     */
+    public function loadRelations()
+    {
+        if(count(static::$_hasOne)) {
+            foreach (static::$_hasOne as $property => $class) {
+                $this->{$property} = $this->hasOne($class);
+            }
+        }
+
+        if(count(static::$_hasMany)) {
+            foreach (static::$_hasMany as $property => $class) {
+                $this->{$property} = $this->hasMany($class);
+            }
+        }
+
+        if(count(static::$_belongsTo)) {
+            foreach (static::$_belongsTo as $property => $class) {
+                // exclude vica-versa relations, to avoid infinity loop
+                if ((isset($class::$_hasOne) && in_array(static::class, $class::$_hasOne)) || (isset($class::$_hasMany)  && in_array(static::class, $class::$_hasMany))) {
+                    continue;
+                }
+                $this->{$property} = $this->belongsTo($class);
+            }
+        }
+
+        if(count(static::$_belongsToMany)) {
+            foreach (static::$_belongsToMany as $property => $class) {
+                // exclude vica-versa relations, to avoid infinity loop
+                if ((isset($class::$_hasOne) && in_array(static::class, $class::$_hasOne)) || (isset($class::$_hasMany)  && in_array(static::class, $class::$_hasMany))) {
+                    continue;
+                }
+                $this->{$property} = $this->belongsToMany($class);
+            }
+        }
     }
 
 
