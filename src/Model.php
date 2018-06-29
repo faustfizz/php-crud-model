@@ -94,44 +94,13 @@ abstract class Model
      * @param (array) $properties
      * @return (object) Model instance
      *
-     * @todo match types in separated method
-     * @todo match all possible types
      * @todo define and use foreign and local keys for relationships
      * @todo infinity loop avoiding still exists in some relationship cases (belongTo-belongsToMany)
      */
     public function __construct(Array $properties = null)
     {
-        // build up available properties
-        // and try to match types
         foreach (self::getFields() as $property) {
-            $type = self::getFieldType($property);
-            $type = explode('(',$type);
-            $value = $properties[$property];
-            switch ($type[0]) {
-                case 'tinyint':
-                case 'smallint':
-                case 'mediumint':
-                case 'int':
-                case 'bigint':
-                    $value = (int)$value;
-                    break;
-                case 'char':
-                case 'varchar':
-                case 'tinytext':
-                case 'text':
-                case 'mediumtext':
-                case 'longtext':
-                    $value = (string)$value;
-                    break;
-                case 'double':
-                case 'float':
-                case 'decimal':
-                    $value = (float)$value;
-                    break;
-                default:
-                    break;
-            }
-            $this->{$property} = $value;
+            $this->{$property} = self::matchType($property, $properties[$property]);
         }
 
         // load relations as properties
@@ -263,6 +232,47 @@ abstract class Model
             }
         }
         return false;
+    }
+
+
+    /**
+     * Try to match property value to the table column type
+     *
+     * @param (string) $field
+     * @param (mixed)  $value  to be matched
+     * @return (mixed) $value  with converted type
+     *
+     * @todo match all possible types properly
+     */
+    protected static function matchType($field, $value)
+    {
+        $type = self::getFieldType($field);
+        $type = explode('(',$type);
+        switch ($type[0]) {
+            case 'tinyint':
+            case 'smallint':
+            case 'mediumint':
+            case 'int':
+            case 'bigint':
+                $value = (int)$value;
+                break;
+            case 'char':
+            case 'varchar':
+            case 'tinytext':
+            case 'text':
+            case 'mediumtext':
+            case 'longtext':
+                $value = (string)$value;
+                break;
+            case 'double':
+            case 'float':
+            case 'decimal':
+                $value = (float)$value;
+                break;
+            default:
+                break;
+        }
+        return $value;
     }
 
 
