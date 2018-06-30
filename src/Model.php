@@ -505,9 +505,10 @@ abstract class Model
 
         // search for model and create if not exists
         $object = self::where($properties);
-        $object = reset($object);
         if ($object == null) {
             $object = self::create($properties);
+        } else {
+            $object = reset($object);
         }
         return $object;
     }
