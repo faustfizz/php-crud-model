@@ -1,7 +1,6 @@
 <?php
 /**
- * Simple INI file loader
- * Converts entries to the $_ENV globals, even with prefix.
+ * Enviroment variables loader using INI file
  *
  * @category MVC Model
  * @package  maarsson/model
@@ -15,19 +14,70 @@ namespace Maarsson;
 class Env {
 
     /**
-     * Load the INI file and make uppercased ENV properties for every variable.
+     * Internal storage
+     */
+    private static $parsedIni;
+
+
+    /**
+     * Load the INI file content to enviroment variables.
      *
      * @param (string) $file
      * @param (string) $prefix
      * @return (void)
      */
     public static function parse($file, $prefix = null) {
-        $prefix .= isset($prefix) ? '_' : null;
-
-        $config = parse_ini_file($file);
-        foreach ($config as $key => $value) {
-            $env = strtoupper($prefix.$key);
-            $_ENV[$env] = $value;
+        if (self::load($file)) {
+            self::parseArray(static::$parsedIni, $prefix);
         }
     }
+
+
+    /**
+     * Load to enviroment variables.
+     *
+     * @param (string) $file
+     * @param (string) $prefix
+     * @return (void)
+     */
+    private static function parseArray($array, $prefix) {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                self::parseArray($value, self::prefix($prefix).$key);
+            } else {
+                $env = strtoupper(self::prefix($prefix).$key);
+                putenv($env.'='.$value);
+            }
+        }
+    }
+
+
+    /**
+     * Load the file.
+     *
+     * @param (string) $file
+     * @return (bool)
+     */
+    private static function load($file) {
+        if(file_exists($file)) {
+            static::$parsedIni = parse_ini_file($file, true);
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Prepare prefix.
+     *
+     * @param (string) $prefix
+     * @return (string)
+     */
+    private static function prefix($prefix = null) {
+        if(isset($prefix) && $prefix !== '') {
+            return $prefix.'_';
+        }
+        return null;
+    }
+
 }
