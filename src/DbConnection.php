@@ -49,15 +49,15 @@ class DbConnection extends PDO
     {
         if (!self::$db)
         {
-            $dsn = "mysql:host=".$_ENV['DB_HOST'].";port=".$_ENV['DB_PORT'].";dbname=".$_ENV['DB_DATABASE'].";charset=".$_ENV['DB_CHARSET'];
+            $dsn = "mysql:host=".env('DB_HOST').";port=".env('DB_PORT').";dbname=".env('DB_DATABASE').";charset=".env('DB_CHARSET');
             $opt = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES   => false,
             ];
-            $prefix = isset($_ENV['DB_PREFIX']) ? $_ENV['DB_PREFIX'] : null;
-            $suffix = isset($_ENV['DB_SUFFIX']) ? $_ENV['DB_SUFFIX'] : null;
-            self::$db = new self($dsn, $_ENV['DB_USER'], $_ENV['DB_PASSWD'], $opt, $prefix, $suffix);
+            $prefix = env('DB_PREFIX') ? env('DB_PREFIX') : null;
+            $suffix = env('DB_SUFFIX') ? env('DB_SUFFIX') : null;
+            self::$db = new self($dsn, env('DB_USER'), env('DB_PASSWD'), $opt, $prefix, $suffix);
         }
         return self::$db;
     }
